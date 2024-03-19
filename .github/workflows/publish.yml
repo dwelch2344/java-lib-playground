@@ -1,0 +1,49 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: sdkman/sdkman-action@main
+        id: sdkman
+
+      - run: java -version
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+#    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v2
+
+#      - name: Set up JDK
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '8'
+#          distribution: 'adopt'
+#          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+#          server-username: GITHUB_USERNAME
+#          server-password: GITHUB_TOKEN
+#          settings-path: ${{ github.workspace }}
+#
+
+      - uses: sdkman/sdkman-action@main
+        id: sdkman
+
+      - name: Publish to GitHub Packages
+        run: |
+          gradle publish
+        env:
+          GITHUB_USERNAME: dwelch2344
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
