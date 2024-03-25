@@ -3,13 +3,13 @@
  */
 package org.example;
 
-//import org.springframework.jdbc.core.JdbcTemplate;
-//import org.springframework.stereotype.Repository;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 public class Library {
 
     public void test() {
-//        JDBC
+        JdbcTemplate foo = new JdbcTemplate();
     }
     public boolean someLibraryMethod() {
         return true;
