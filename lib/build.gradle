@@ -5,9 +5,13 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'co.davidwelch.playground'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '8'
+def GROUP_ID = 'co.davidwelch.playground'
+def ARTIFACT_ID = 'my-spring-boot-library'
+def VERSION_ID = '0.0.5-SNAPSHOT'
+
+
+group = GROUP_ID
+version = VERSION_ID
 
 repositories {
     mavenCentral()
@@ -23,13 +27,25 @@ java {
         languageVersion = JavaLanguageVersion.of(8)
     }
 }
-
+//
 bootJar {
     enabled = false
 }
+//
+//jar {
+//    enabled = true
+////    archiveBaseName.set('my-spring-boot-library')
+////    archiveVersion.set(version)
+//
+//    archiveFileName.set('my-spring-boot-library-' + version + '.jar')
+//}
 
-jar {
-    enabled = true
+tasks.named("bootJar") {
+    archiveClassifier = 'boot'
+}
+
+tasks.named("jar") {
+    archiveClassifier = ''
 }
 
 // Publishing configuration
@@ -37,20 +53,30 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
 
-            groupId = 'co.davidwelch.playground'
-            artifactId = 'my-spring-boot-library'
-            version = '0.0.1-SNAPSHOT'
+
+
+            groupId = GROUP_ID
+            artifactId = ARTIFACT_ID
+            version = VERSION_ID
         }
     }
     repositories {
         maven {
             name = 'GitHubPackages'
-            url = uri("https://maven.pkg.github.com/dwelch2344/java-example-lib")
+            url = uri("https://maven.pkg.github.com/dwelch2344/java-lib-playground")
 
             credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
-                password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+                username = System.getenv("GITHUB_USERNAME")
+                password = System.getenv("GITHUB_TOKEN")
             }
         }
     }
